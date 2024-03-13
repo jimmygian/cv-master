@@ -2,11 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../../utils/GlobalContext';
 import { useNavigate } from 'react-router-dom';
 import './logingood.css'
+import Auth from '../Auth';
+import { db } from '../../config/firebase';
+import { getDocs, collection } from 'firebase/firestore';
 
 export default function Login(props) {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState(null)
-  const { logout, authenticated, updateCVMCurrentUser,  getCVMCurrentUser, capitalize, getCVMDatabase} = useGlobalContext();
+  const { logout, isAuth, setIsAuth, authenticated, updateCVMCurrentUser,  getCVMCurrentUser, capitalize, getCVMDatabase} = useGlobalContext();
+  const [defaultSt, setDefaultSt] = useState([]);
+  const collectionRef = collection(db, "editorDefault");
+
+  useEffect(() => {
+    const getCollectionDocsData = async () => {
+      try {
+        const data = await getDocs(collectionRef);
+        const filteredData = data.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        }));
+
+        console.log(filteredData)
+      } catch (err) {
+        console.error(err)
+      }
+    };
+    getCollectionDocsData();
+  }, []);
 
   const welcomeMessage = "Welcome to CV Master";
 
@@ -74,6 +96,7 @@ export default function Login(props) {
               />
             </div>
           </form>
+          <Auth />
         </div>
       ) : (
         <>

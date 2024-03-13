@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { initialStaging } from './defaultValues';
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 
 import {
   getLocalStorage,
@@ -7,8 +9,9 @@ import {
   getCVMCurrentUser,
   getCVMDatabase,
   updateCVMCurrentUser,
-  logout
 } from './helperLocalStorage';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 
 // We are creating / initializing the Context first
@@ -30,7 +33,21 @@ export const GlobalContextProvider = ({ children }) => {
   const [userData, setUserData] = useState(null)
   const [authenticated, setAuthenticated] = useState(false);
   const [hideEditorOptions, setHideEditorOptions] = useState(false)
+  const [isAuth, setIsAuth] = useState(cookies.get("auth-token"));
 
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.removeItem('CVMCurrentUser');
+      cookies.remove("auth-token")
+      setIsAuth(false);
+      setAuthenticated(false);
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
 
   // Function to update CV-Master DB in localStorage
@@ -297,7 +314,9 @@ export const GlobalContextProvider = ({ children }) => {
       saveCV,
       hideEditorOptions,
       setHideEditorOptions,
-      handleCV
+      handleCV,
+      isAuth,
+      setIsAuth,
     }}>
       {children}
     </GlobalContext.Provider>

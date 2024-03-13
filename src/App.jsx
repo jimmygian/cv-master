@@ -12,7 +12,7 @@ import SearchJobs from './components/SearchJobs';
 import './utils/globalStyles.css'
 
 function App() {
-  const { authenticated, setAuthenticated, getCVMCurrentUser } = useGlobalContext();
+  const { isAuth, setIsAuth, authenticated, setAuthenticated, getCVMCurrentUser } = useGlobalContext();
 
   useEffect(() => {
     const currentUser = getCVMCurrentUser();
@@ -20,6 +20,10 @@ function App() {
       allowUserIn();
     }
   }, [authenticated]);
+
+  useEffect(() => {
+    console.log("is Auth?", isAuth)
+  }, [isAuth])
 
   function allowUserIn() {
     setAuthenticated(true)

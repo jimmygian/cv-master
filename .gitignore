@@ -1,4 +1,6 @@
 .env
+.firebase
+.github
 
 # Logs
 logs
