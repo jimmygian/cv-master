@@ -1,41 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../../utils/GlobalContext';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import './logingood.css'
-import Auth from '../Auth';
-import { db } from '../../config/firebase';
-import { getDocs, collection } from 'firebase/firestore';
+import { useAuth } from '../../utils/contexts/authContext';
+import { getCollectionDocsData } from '../../config/firestore';
 
-export default function Login(props) {
+export default function Home(props) {
+  const { userLoggedIn, currentUser } = useAuth();
+
+  console.log("CURRENT USER:", currentUser)
+  console.log("USER LOGGED IN?:", userLoggedIn)
+  
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState(null)
   const { logout, isAuth, setIsAuth, authenticated, updateCVMCurrentUser,  getCVMCurrentUser, capitalize, getCVMDatabase} = useGlobalContext();
-  const [defaultSt, setDefaultSt] = useState([]);
-  const collectionRef = collection(db, "editorDefault");
-
-  useEffect(() => {
-    const getCollectionDocsData = async () => {
-      try {
-        const data = await getDocs(collectionRef);
-        const filteredData = data.docs.map(doc => ({
-          ...doc.data(),
-          id: doc.id
-        }));
-
-        console.log(filteredData)
-      } catch (err) {
-        console.error(err)
-      }
-    };
-    getCollectionDocsData();
-  }, []);
 
   const welcomeMessage = "Welcome to CV Master";
 
   // Get CV Count (if CVs are present in user's DB)
-  const currentUser = getCVMCurrentUser() || '';
+  const loggedInUser = currentUser ? (currentUser.displayName ? currentUser.displayName : currentUser.email ? currentUser.email : "unknown") : "";
   const CVMDatabase = getCVMDatabase() || [];
-  const userDB = CVMDatabase.filter(DB => DB.userData.username === currentUser);
+  const userDB = CVMDatabase.filter(DB => DB.userData.username === loggedInUser);
   const userCVs = userDB.length > 0 ? userDB[0].userCVs : [];
   const userCVsLength = userCVs.length;
 
@@ -74,13 +59,44 @@ export default function Login(props) {
     navigate('./editor')
   }
 
-
-
-
-
   return (
     <div className='loginCompWrapper'>
-      {!authenticated ? (
+        {!userLoggedIn && <Navigate to={'/login'} replace={true} />}
+        <>
+          { userCVsLength > 0 ? <div className='welcomeWrapper'>
+            <h1 className='login-header'>{`Hey, ${capitalize(loggedInUser)}!`}</h1>
+
+            <h3 className="CVcound">You have created <a className='goToCVsLink'  tabIndex="0" onClick={goToCVs}>{`${userCVsLength} CVs`}</a></h3>
+
+            <div className="container-fluid actionContainer">
+              <button onClick={goToEditor} className=" btn welcomeBtn">Create CV</button>
+              <button onClick={goToSearch} className=" btn welcomeBtn">Search Jobs</button>
+              <button onClick={logout} className=" btn welcomeBtn">Log out?</button>
+            </div>
+          </div>
+          :
+          <>
+            <h1>{`Welcome, ${capitalize(loggedInUser)}!`}</h1>
+            <h3 className="CVcound">Let's create your first CV!</h3>
+            <div className="container-fluid actionContainer">
+              <button onClick={goToEditor} className=" btn welcomeBtn">Create CV</button>
+              <button onClick={logout} className=" btn welcomeBtn">Log out?</button>
+            </div>
+          </>
+          }
+        </>
+    </div>
+  )
+}
+
+
+
+
+/*
+
+return (
+    <div className='loginCompWrapper'>
+      {!userLoggedIn ? (
         <div className='loginWrapper'>
           <h1 className='login-header'>{welcomeMessage}</h1>
           <form className='login-form' onSubmit={(e) => submitUser(e)}>
@@ -96,12 +112,11 @@ export default function Login(props) {
               />
             </div>
           </form>
-          <Auth />
         </div>
       ) : (
         <>
           { userCVsLength > 0 ? <div className='welcomeWrapper'>
-            <h1 className='login-header'>{`Hey, ${capitalize(currentUser)}!`}</h1>
+            <h1 className='login-header'>{`Hey, ${capitalize(loggedInUser)}!`}</h1>
 
             <h3 className="CVcound">You have created <a className='goToCVsLink'  tabIndex="0" onClick={goToCVs}>{`${userCVsLength} CVs`}</a></h3>
 
@@ -113,7 +128,7 @@ export default function Login(props) {
           </div>
           :
           <>
-            <h1>{`Welcome, ${capitalize(currentUser)}!`}</h1>
+            <h1>{`Welcome, ${capitalize(loggedInUser)}!`}</h1>
             <h3 className="CVcound">Let's create your first CV!</h3>
             <div className="container-fluid actionContainer">
               <button onClick={goToEditor} className=" btn welcomeBtn">Create CV</button>
@@ -126,4 +141,5 @@ export default function Login(props) {
       )}
     </div>
   )
-}
+
+  */

@@ -4,7 +4,7 @@ import EditorMain from './EditorMain';
 import {EditorSideBar, EditorSideBtn} from './EditorSideBar';
 import { usePreventReload } from '../../utils/usePreventReload'
 import { ErrorBoundary } from 'react-error-boundary';
-import Login from '../Login'
+import Login from '../Home'
 import { useNavigate } from 'react-router-dom';
 import { useGlobalContext } from '../../utils/GlobalContext';
 
