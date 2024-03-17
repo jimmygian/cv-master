@@ -20,7 +20,7 @@ export const doSignInWithGoogle = async () => {
     return result;
 };
 
-export const doSignOut = () => {
+export const doSignOut = async () => {
     return auth.signOut();
 };
 

@@ -18,11 +18,9 @@ const Login = () => {
             try {
                 setIsSigningIn(true)
                 doSignInWithEmailAndPassword(email, password);
-                console.log(currentUser)
                 // await doSendEmailVerification();
             } catch (error) {
                 console.error(error)
-                console.log("ERRRROR")
                 setIsSigningIn(false)
             }
             // Inside your submitUser function's catch block:
@@ -32,16 +30,18 @@ const Login = () => {
 
     const onGoogleSignIn = async (e) => {
         e.preventDefault()
-        if (!isSigningIn) {
-            setIsSigningIn(true)
-            const { user } = await doSignInWithGoogle();
-                console.log("USER!!", user)
-                await createUserDocument(user);
 
+        try {
+            if (!isSigningIn) {
+                setIsSigningIn(true)
+                const { user } = await doSignInWithGoogle();
+                    await createUserDocument(user);
+            }
+        } catch (err) {
+            console.error(err);
         }
     }
 
-    console.log("User Logged In?", userLoggedIn)
     return (
         <div>
             {userLoggedIn && (<Navigate to={'/home'} replace={true} />)}

@@ -43,7 +43,6 @@ export const GlobalContextProvider = ({ children }) => {
       cookies.remove("auth-token")
       setIsAuth(false);
       setAuthenticated(false);
-      window.location.reload();
     } catch (err) {
       console.error(err);
     }
@@ -200,10 +199,10 @@ export const GlobalContextProvider = ({ children }) => {
   // RUNS ON EVERY APP REFRESH + ON USER CHANGE
   useEffect(() => {
     if (!authenticated) {
-      console.log("Not authenticated. Returning...")
+      console.log("GlobalContext APP REFRESH: Not authenticated. Returning...")
       return;
     } else {
-      console.log("User authenticated.")
+      console.log("GlobalContext APP REFRESH: User authenticated.")
     }
 
     const currentUser = getCVMCurrentUser();
