@@ -1,0 +1,117 @@
+/* LOGIN PAGE */
+
+.loginCompWrapper {
+    --btn-bg-color: rgb(77, 83, 98);
+    --btn-bg-color-active: rgba(77, 83, 98, 0.647);
+    --btn-bg-color-hover: rgba(88, 94, 109, 0.647);
+    --btn-color: rgb(255, 255, 255);
+    --btn-bg-color-outline: rgba(77, 83, 98, 0.316);
+    --label-color: rgba(77, 83, 98, 0.8);
+}
+
+
+.loginCompWrapper {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    margin-top: 2rem;
+}
+.loginCompWrapper h1 {
+    font-family: 'Kavoon', serif;
+    max-width: 15rem;
+}
+
+.loginWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.login-form {
+    min-height: 10rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 70vw;
+}
+.login-label {
+    color: var(--label-color);
+    font-family: 'Numans', sans-serif;
+    font-size: small;
+    align-self: start;
+}
+
+.login-submitBtn {
+    border: 0;
+    /* border-radius: 6px 0px 0px 6px; */
+    font-family: 'Kavoon', serif;
+    background-color: var(--btn-bg-color) ;
+    color: var(--btn-color);
+    width: 7rem;
+}
+.login-submitBtn:active {
+    color: var(--btn-bg-color) ;
+    background-color: var(--btn-bg-color-active);
+}
+
+.login-submitBtn:hover {
+    background-color: var(--btn-bg-color-hover);
+}
+
+.login-submitBtn:focus,
+.login-input:focus {
+    outline: 0.2rem solid var(--btn-bg-color-outline);
+    outline-offset: 0.1rem;
+    border: inherit;
+}
+
+
+.login-inputNbtnContainer {
+    display: flex;
+    min-width: 100%;
+    min-height: 2.4rem;
+}
+.login-input {
+    font-family: 'Numans', sans-serif;
+    border: 0;
+    flex-grow: 1;
+    box-shadow: inset 0px -1px 3px 1px rgba(0, 0, 0, 0.15);
+}
+.login-input::placeholder {
+    color: #C7C7C7;
+    font-size: smaller;
+}
+.login-input[type="text"] {
+    padding-left: 0.8rem;
+  }
+
+  .login-smallPar {
+    font-size: small;
+  }
+
+  .login-or {
+    font-size: small;
+    margin-bottom: 1.5rem;
+    color: var(--label-color);
+  }
+  .login-or::before {
+    content: "--";
+    margin: 0rem 0.2rem;
+}
+.login-or::after {
+    content: "--";
+    margin: 0rem 0.2rem;
+  }
+
+  .login-googleIcon {
+    width: 25px;
+  }
+
+  .login-google {
+    background-color: rgba(36, 160, 237, 0.267);
+  }
