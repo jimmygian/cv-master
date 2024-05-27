@@ -6,13 +6,17 @@ import EditorNewCV from './editorPaths/EditorNewCV';
 import { useGlobalContext } from '../../utils/GlobalContext';
 
 export default function Editor() {
-  const { saveCV } = useGlobalContext();
+  const { saveCV, userData } = useGlobalContext();
   const [currentRouteIndex, setCurrentRouteIndex] = useState(0);
   const navigate = useNavigate();
 
   // useEffect(() => {
   //   setCurrentRouteIndex(prev => prev)
   // })
+
+  useEffect(() => {
+    console.log(userData)
+  }, [])
 
   // Defines an array of routes in the desired order
   const routes = [

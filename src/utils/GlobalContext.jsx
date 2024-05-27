@@ -15,7 +15,7 @@ import {
   } from './helperLocalStorage';
   import { signOut } from 'firebase/auth';
   import { auth } from '../config/firebase';
-  import { getUserStagingCV } from '../config/firestore';
+  import { getUserStagingCV, storeNewCV, storeStagingCV } from '../config/firestore';
   
 
 // We are creating / initializing the Context first
@@ -159,6 +159,30 @@ export const GlobalContextProvider = ({ children }) => {
   }
 
 
+  function saveCV() {
+    // Check if CV Title exists, prompt user if not
+    const CVTitle = userData.stagingCVTitle || prompt("CV Title?")
+    if (!CVTitle) {
+      return;
+    }
+
+    console.log("CV Saved: ", CVTitle)
+    storeNewCV({
+      ...userData.stagingCV,
+      userId: userData.user.uid,
+      CVTitle: userData.stagingCVTitle,
+    });
+  }
+
+
+  function saveStagingCV() {
+    storeStagingCV(userData.stagingCV, userData.user.uid);
+  }
+
+  function initializeStagingCV() {
+    storeStagingCV(initialStaging, userData.user.uid);
+  }
+
   // // SAVE TO LOCAL STORAGE FUNCTIONALITY
 
   // // Saves CV to userCV array in localStorage
@@ -263,7 +287,7 @@ export const GlobalContextProvider = ({ children }) => {
       const stagingCV = await getUserStagingCV(currentUser.uid);
 
       setUserData({
-        userData: currentUser,
+        user: currentUser,
         stagingCV: stagingCV[0],
         stagingCVTitle: '',
       });
@@ -337,9 +361,11 @@ export const GlobalContextProvider = ({ children }) => {
       // setAuthenticated,
       capitalize,
       logout,
-      // saveCV,
+      saveCV,
       hideEditorOptions,
       setHideEditorOptions,
+      saveStagingCV,
+      initializeStagingCV,
       // handleCV,
     }}>
       {children}

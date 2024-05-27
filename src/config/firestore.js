@@ -7,8 +7,8 @@ import {
   doc,
   query,
   where,
-  // updateDoc,
-  // deleteDoc,
+  updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { initialStaging } from "../utils/defaultValues";
@@ -84,18 +84,43 @@ const getUserCVs = async (userId) => {
   return userCVs; 
 };
 
-const addToDB = async (path, data, type="add") => {
+const storeNewCV = async (data) => {
   try {
     let refDoc;
     let ref;
-    if (type === 'add') {
-      refDoc = collection(db, 'CVs');
-      ref = await addDoc(refDoc, data);
-    } else {
-      refDoc = doc(db, ...path);
-      ref = await setDoc(refDoc, data);
-    }
+
+    refDoc = collection(db, 'CVs');
+    ref = await addDoc(refDoc, data);
     return ref;
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const storeStagingCV = async (data, userId) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    const stagingCVCollectionRef = collection(userDocRef, 'stagingCV'); 
+    
+    // Get all documents in the subcollection (should be only one)
+    const snapshot = await getDocs(stagingCVCollectionRef);
+
+    if (snapshot.size === 0) {
+      console.log("No documents found in subcollection");
+      return; // Nothing to delete
+    }
+
+    // Since you know there's only one document, use the first doc
+    const docToDelete = snapshot.docs[0];
+    // await docToDelete.ref.delete();
+    
+    const updatedData = {
+      ...data
+    }
+
+    await updateDoc(docToDelete.ref, updatedData);
+
+    return;
   } catch (err) {
     console.error(err)
   }
@@ -106,5 +131,6 @@ export {
   createUserDocument,
   getUserCVs, 
   getUserStagingCV, 
-  addToDB, 
+  storeNewCV, 
+  storeStagingCV,
 };

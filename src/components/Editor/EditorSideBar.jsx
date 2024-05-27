@@ -16,7 +16,7 @@ const links = [
 
 export const EditorSideBar = (props) => {
   const navigate = useNavigate();
-  const { saveCV } = useGlobalContext();
+  const { saveCV, userData, saveStagingCV, initializeStagingCV } = useGlobalContext();
   const [activeElement, setActiveElement] = useState(null)
   const [showModal, setShowModal] = useState(false);
 
@@ -27,8 +27,16 @@ export const EditorSideBar = (props) => {
     setActiveElement('basic-info')
   }, [])
 
+
+
   const handleSaveCV = () => {
     saveCV();
+    // setCurrentRouteIndex(0);
+    navigate('/myCVs');
+  }
+
+  const handleSaveProgress = () => {
+    saveStagingCV();
     // setCurrentRouteIndex(0);
     navigate('/myCVs');
   }
@@ -46,12 +54,16 @@ export const EditorSideBar = (props) => {
     )
   })
 
+
+
+  
   return (
     <aside className='editor-sideBar d-none d-md-flex flex-column justify-content-between m-0 p-0 col-2'>
       <PreviewModal showModal={showModal} handleClose={handleClose} />
       <button variant="primary" onClick={handleShow} className="btn btn-primary">PREVIEW</button>
         <ul className='navbar-nav align-items-center justify-content-evenly'>
           {navElements}
+          <button onClick={handleSaveProgress} className="btn btn-primary save-cv-btn">Save Progress</button>
         </ul>
       <button onClick={handleSaveCV} className="btn btn-primary save-cv-btn">SAVE CV</button>
     </aside>

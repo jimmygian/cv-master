@@ -17,9 +17,11 @@ export function AuthProvider({ children }) {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(cookies.get("auth-token"));
+  const [userDocRef, setUserDocRef] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, initializeUser);
+    setUserDocRef(null)
     return unsubscribe;
   }, []);
 
@@ -28,10 +30,12 @@ export function AuthProvider({ children }) {
       // console.log("USER: ", user.accessToken)
       setCurrentUser({ ...user });
       setUserLoggedIn(true);
+      setUserDocRef(doc(db, "users", `${user.uid}`))
       cookies.set("auth-token", user.accessToken);
     } else {
       setCurrentUser(null);
       setUserLoggedIn(false);
+      setUserDocRef(null);
       setIsAuth(false);
     }
     setLoading(false);
@@ -44,6 +48,7 @@ export function AuthProvider({ children }) {
     userLoggedIn,
     loading,
     isAuth,
+    userDocRef,
   };
 
   return (
