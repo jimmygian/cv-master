@@ -33,7 +33,7 @@ export default function EditorNewCV() {
     <form onSubmit={(e) => handleGetStarted(e)} className="d-flex flex-column editor-NewCV text-center justify-content-center align-items-center">
       <h3 className='m-5'> Lets create your new CV!</h3>
       <div className='container-fluid input-div mb-3 p-0 d-flex '>
-        <label className='col-3 col-sm-2' htmlFor="CVTitle">Title :</label>
+        <h4 className='label col-3 col-sm-2'>CV Title</h4>
         <input
           ref={inputRef} // Assign the ref to the input element
           name='CVTitle'

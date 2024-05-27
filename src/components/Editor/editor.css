@@ -134,6 +134,21 @@
     height: 30vh;
 }
 
+.editor-NewCV h4 {
+    font-family: 'Kavoon', serif;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    margin: 0;
+    color: var(--editor-newCV-btn-text);
+    background-color: var(--editor-newCV-btn-bg);
+    border-radius: 10px 0px 0px 10px;
+    min-width: 4rem;
+
+}
+
 .editor-NewCV h3 {
     font-family: 'Kaushan Script', cursive;
     font-size: 1.8rem;
