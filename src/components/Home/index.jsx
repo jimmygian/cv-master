@@ -10,7 +10,7 @@ import { getUserCVs } from "../../config/firestore";
 
 export default function Home(props) {
   const { userLoggedIn, currentUser } = useAuth();
-  const { logout, capitalize } = useGlobalContext();
+  const { logout, capitalize, userData } = useGlobalContext();
   const [isLoading, setIsLoading] = useState(false);
   const [userCVsLength, setUserCVsLength] = useState(0);
   const navigate = useNavigate();
@@ -42,7 +42,6 @@ export default function Home(props) {
     navigate("/searchJobs");
   }
   function goToEditor() {
-    console.log("Pressed!");
     navigate("/editor");
   }
 
@@ -52,7 +51,7 @@ export default function Home(props) {
         <h1>Loading...</h1>
       ) : (
         <>
-          <h1>{`Welcome, ${capitalize(currentUser.email)}!`}</h1>
+          <h1>{`Welcome, ${capitalize(currentUser.displayName ? currentUser.displayName : currentUser.email)}!`}</h1>
           {userCVsLength > 0 ? (
             <h3 className="CVcound">
               You have created{" "}
