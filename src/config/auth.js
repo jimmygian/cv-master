@@ -1,9 +1,23 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, sendPasswordResetEmail, updatePassword, sendEmailVerification, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, sendPasswordResetEmail, updatePassword, sendEmailVerification, signInWithPopup, updateProfile } from "firebase/auth";
 import { auth } from "./firebase";
 
 
-export const doCreateUserWithEmailAndPassword = async (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+export const doCreateUserWithEmailAndPassword = async (email, password, displayName) => {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Update user profile with additional information
+        await updateProfile(user, {
+        displayName: `${displayName}`, // Combine first and last name
+        // You can add other relevant profile fields here (optional)
+        });
+        return userCredential;
+    } catch (err) {
+        console.error(err)
+    }
+
+    // return createUserWithEmailAndPassword(auth, email, password);
     
 };
 export const doSignInWithEmailAndPassword = async (email, password) => {

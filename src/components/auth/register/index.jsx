@@ -11,6 +11,7 @@ const Register = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [confirmPassword, setconfirmPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -19,10 +20,21 @@ const Register = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      console.log("Passwords don't match!!")
+      return;
+    }
+    
+    if (!username.trim() || username.trim().length < 4) {
+      console.log("Incorrect Username!!")
+      return;
+    }
+
     try {
       if (!isRegistering) {
         setIsRegistering(true);
-        const { user } = await doCreateUserWithEmailAndPassword(email, password);
+        const { user } = await doCreateUserWithEmailAndPassword(email, password, username);
         await createUserDocument(user);
       }
     } catch (error) {
@@ -59,6 +71,18 @@ const Register = () => {
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
+                  }}
+                  className="login-input"
+                />
+              </div>
+              <div className="d-flex flex-column">
+                <label className="login-label">Username</label>
+                <input
+                  type="username"
+                  // autoComplete="email"
+                  required
+                  onChange={(e) => {
+                    setUsername(e.target.value);
                   }}
                   className="login-input"
                 />
