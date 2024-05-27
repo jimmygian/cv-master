@@ -5,8 +5,6 @@ import { useGlobalContext } from '../../../utils/GlobalContext';
 
 
 export default function EditorNewCV() {
-  // const { userLoggedIn, currentUser } = useAuth();
-  // const { setText, userData, setUserData, hideEditorOptions, setHideEditorOptions } = useGlobalContext();
   const { setText, userData, setUserData, setHideEditorOptions } = useGlobalContext();
   const value = userData.stagingCVTitle;
 
@@ -19,17 +17,13 @@ export default function EditorNewCV() {
     setHideEditorOptions(true);
   }, [setHideEditorOptions])
 
-  useEffect(() => {
-    console.log(userData)
-  }, [userData])
-
   // LOGIC for submit
   function handleGetStarted(e) {
     e.preventDefault();
-    if (value) {
-      console.log('Title value inserted:', value);
+    if (value.trim()) {
       navigate('basic-info');
     } else {
+      // TODO: Handle error
       console.log('No Title value inserted!');
     }
   }
@@ -52,6 +46,5 @@ export default function EditorNewCV() {
       </div>
       <button className='btn btn-get-started' type="submit">GET STARTED</button>
     </form>
-    // <h1>EditorNewCV</h1>
   );
 }

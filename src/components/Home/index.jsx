@@ -10,16 +10,11 @@ import { getUserCVs } from "../../config/firestore";
 
 export default function Home(props) {
   const { userLoggedIn, currentUser } = useAuth();
-  console.log("userLoggedIn:", userLoggedIn);
   const { logout, capitalize } = useGlobalContext();
-  const navigate = useNavigate();
-
-  // const [inputValue, setInputValue] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [userCVsLength, setUserCVsLength] = useState(0);
+  const navigate = useNavigate();
 
-
-  console.log("Home PROPS:", props)
   // FETCH COMPONENT DATA
   useEffect(() => {
     const fetchCVs = async () => {
@@ -28,7 +23,7 @@ export default function Home(props) {
       setIsLoading(true);
       try {
         const CVs = await getUserCVs(currentUser.uid);
-        console.log(CVs);
+        // console.log(CVs);
         setUserCVsLength(CVs.length);
       } catch (err) {
         console.log(err);

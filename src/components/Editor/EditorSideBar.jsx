@@ -29,16 +29,22 @@ export const EditorSideBar = (props) => {
 
 
 
-  const handleSaveCV = () => {
-    saveCV();
+  const handleSaveCV = async () => {
+    await saveCV();
     // setCurrentRouteIndex(0);
     navigate('/myCVs');
   }
 
-  const handleSaveProgress = () => {
-    saveStagingCV();
+  const handleSaveProgress = async () => {
+    await saveStagingCV();
     // setCurrentRouteIndex(0);
     navigate('/myCVs');
+  }
+
+  const setInitialTemplate = async () => {
+    await initializeStagingCV();
+    // setCurrentRouteIndex(0);
+    navigate('/editor');
   }
 
   function updateActiveLink(e) {
@@ -60,10 +66,13 @@ export const EditorSideBar = (props) => {
   return (
     <aside className='editor-sideBar d-none d-md-flex flex-column justify-content-between m-0 p-0 col-2'>
       <PreviewModal showModal={showModal} handleClose={handleClose} />
-      <button variant="primary" onClick={handleShow} className="btn btn-primary">PREVIEW</button>
+      <button onClick={handleShow} className="btn btn-primary">PREVIEW</button>
         <ul className='navbar-nav align-items-center justify-content-evenly'>
           {navElements}
-          <button onClick={handleSaveProgress} className="btn btn-primary save-cv-btn">Save Progress</button>
+
+          {/* UL BUTTONS */}
+          <button onClick={handleSaveProgress} className="btn btn-secondary ul-btn save-pr-btn">Save Progress</button>
+          <button onClick={setInitialTemplate} className="btn btn-secondary ul-btn init-tmp-btn">Restore Template</button>
         </ul>
       <button onClick={handleSaveCV} className="btn btn-primary save-cv-btn">SAVE CV</button>
     </aside>

@@ -6,17 +6,9 @@ import EditorNewCV from './editorPaths/EditorNewCV';
 import { useGlobalContext } from '../../utils/GlobalContext';
 
 export default function Editor() {
-  const { saveCV, userData } = useGlobalContext();
+  const { saveCV, userData, saveStagingCV, initializeStagingCV } = useGlobalContext();
   const [currentRouteIndex, setCurrentRouteIndex] = useState(0);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   setCurrentRouteIndex(prev => prev)
-  // })
-
-  useEffect(() => {
-    console.log(userData)
-  }, [])
 
   // Defines an array of routes in the desired order
   const routes = [
@@ -52,6 +44,18 @@ export default function Editor() {
     navigate('/myCVs');
   }
 
+  const handleSaveProgress = async () => {
+    await saveStagingCV();
+    // setCurrentRouteIndex(0);
+    navigate('/myCVs');
+  }
+
+  const setInitialTemplate = async () => {
+    await initializeStagingCV();
+    setCurrentRouteIndex(0);
+    navigate('/editor');
+  }
+
 
   return (
     <div className="col editor-main">
@@ -63,6 +67,25 @@ export default function Editor() {
             <Route path="education" element={<EditorArrSection key="education" setIndex={() => setCurrentRouteIndex(4)} section={"education"} />} />
             <Route path="other" element={<EditorStrSection key="other" setIndex={() => setCurrentRouteIndex(5)} section="other" elements={["other"]} />} />
         </Routes>
+
+        {(currentRouteIndex > 0) && (currentRouteIndex < 5) && (
+          <div className='editor-secondary-btn-div d-md-none mt-5 text-center'>
+            <button 
+              name="savePr" 
+              className="btn btn-secondary m-1"
+              onClick={handleSaveProgress}
+            >{"Save Progress"}
+            </button>
+            <button 
+              name="init" 
+              className="btn btn-secondary m-1"
+              onClick={setInitialTemplate}
+            >{"Restore Template"}
+            </button>
+          </div>
+        )}
+
+
         {(currentRouteIndex > 0) && (currentRouteIndex < 5) && (
           <div className="editor-navBlock d-flex d-md-none justify-content-center">
             <button 

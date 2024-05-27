@@ -15,7 +15,8 @@ import {
   } from './helperLocalStorage';
   import { signOut } from 'firebase/auth';
   import { auth } from '../config/firebase';
-  import { getUserStagingCV, storeNewCV, storeStagingCV } from '../config/firestore';
+  import { getUserStagingCV, storeNewCV, storeStagingCV, modifyCV } from '../config/firestore';
+import { getDoc } from 'firebase/firestore';
   
 
 // We are creating / initializing the Context first
@@ -159,7 +160,7 @@ export const GlobalContextProvider = ({ children }) => {
   }
 
 
-  function saveCV() {
+  async function saveCV() {
     // Check if CV Title exists, prompt user if not
     const CVTitle = userData.stagingCVTitle || prompt("CV Title?")
     if (!CVTitle) {
@@ -167,11 +168,14 @@ export const GlobalContextProvider = ({ children }) => {
     }
 
     console.log("CV Saved: ", CVTitle)
-    storeNewCV({
+    
+    const newCVData = {
       ...userData.stagingCV,
       userId: userData.user.uid,
       CVTitle: userData.stagingCVTitle,
-    });
+    }
+
+    await storeNewCV(newCVData, userData.user.uid);
   }
 
 
@@ -181,96 +185,54 @@ export const GlobalContextProvider = ({ children }) => {
 
   function initializeStagingCV() {
     storeStagingCV(initialStaging, userData.user.uid);
+    setUserData({
+      user: currentUser,
+      stagingCV: initialStaging,
+      stagingCVTitle: '',
+    });
   }
 
-  // // SAVE TO LOCAL STORAGE FUNCTIONALITY
 
-  // // Saves CV to userCV array in localStorage
-  // function saveCV() {
-  //   // Check if CV Title exists, prompt user if not
-  //   const CVTitle = userData.stagingCVTitle || prompt("CV Title?")
-  //   if (!CVTitle) {
-  //     return;
-  //   }
 
-  //   // 1. Create new-CV Object
-  //   const newCV = {
-  //     title: [CVTitle],
-  //     lastModified: new Date(),
-  //     data: {
-  //       ...userData.stagingCV
-  //     }
-  //   }
+  // DUPLICATE / MODIFY / REMOVE CV function
+  async function handleCV(index, type, ref) {
+    // Get info
+    const userId = userData.user.uid;
+    const CV = await getDoc(ref);
+    const CVData = CV.data();
+    console.log("CV DATA!!: ", CVData);
 
-  //   // Update if CV Title exists - TBC
-
-  //   // Update "local" userData
-  //   const newUserData = {
-  //     ...userData,
-  //     userCVs: [
-  //       ...userData.userCVs,
-  //       newCV
-  //     ],
-  //     stagingCV: initialStaging,
-  //     stagingCVTitle: ''
-  //   }
-  //   setUserData((prev) => newUserData);
-
-  //   // Update localStorage
-  //   updateCVMDatabase(newUserData)
-  // }
+    // Do operation
+    if (type === 'remove') {
+      if (window.confirm(`Are you sure you want to delete CV '${CVData.CVTitle}'?`)) {
+        await modifyCV("delete", ref, userId);
+      }
+    }
+    
+    if (type === 'duplicate') {
+      await modifyCV("duplicate", ref, userId);
+    }
+    
+    if (type === 'modify') {
+      // await modifyCV("modify", ref, userId); 
+      setUserData((prev) => {
+        return {
+          ...prev,
+          stagingCV: CVData,
+          stagingCVTitle: CVData.CVTitle,
+        }
+      });
+    }
+  }
 
 
 
-  // // RUNS ON EVERY APP REFRESH + ON USER CHANGE
-  // useEffect(() => {
-  //   if (!authenticated) {
-  //     console.log("GlobalContext APP REFRESH: Not authenticated. Returning...")
-  //     return;
-  //   } else {
-  //     console.log("GlobalContext APP REFRESH: User authenticated.")
-  //   }
 
-  //   const currentUser = getCVMCurrentUser();
-  //   let CVMDatabase = getCVMDatabase();
-
-  //   // Create CVMDatabase if it doesn't exist
-  //   if (!CVMDatabase) {
-  //     console.log("NO DATABASE!, creating..")
-  //     updateLocalStorage('CVMDatabase', []);
-  //     CVMDatabase = getCVMDatabase();
-  //   }
-
-  //   // Check if current user is set
-  //   if (!currentUser) {
-  //     console.log('User not set. Prompting for login...');
-  //     return;
-  //   } else {
-  //     // User is set, check if user exists in the database
-  //     const userExists = CVMDatabase.some(obj => obj.userData.username === currentUser);
-
-  //     if (userExists) {
-  //       // User exists, retrieve user data from the database
-  //       const userDataFromDB = CVMDatabase.find(obj => obj.userData.username === currentUser);
-
-  //       // Update global state with user data
-  //       setUserData(userDataFromDB);
-  //     } else {
-  //       // User is new, initiate a new stateful object
-  //       setUserData({
-  //         userData: {
-  //           username: currentUser,
-  //           signupDate: new Date(),
-  //         },
-  //         stagingCV: initialStaging,
-  //         stagingCVTitle: '',
-  //         userCVs: []
-  //       });
-  //     }
-  //   }
-  // }, [authenticated]);
+  // ** ON APP REFRESH ** //
+  // ==================== //
 
   useEffect(() => {
+    // Create async function
     const initializeUser = async () => {
       // Check if user is logged in, return if not
       if (!userLoggedIn) {
@@ -293,56 +255,11 @@ export const GlobalContextProvider = ({ children }) => {
       });
 
     };
+    // Call async function
     initializeUser();
   }, [currentUser, currentUser?.uid, userLoggedIn])
 
-
-  // function handleCV(index, type) {
-  //   const newCVarr = userData.userCVs;
-  //   if (!newCVarr || newCVarr.length <= 0 || index === null) {
-  //     console.log("Did not handle CV operation.")
-  //     return;
-  //   }
-
-  //   if (type === 'remove') {
-  //     newCVarr.splice(index, 1);
-  //   }
-
-  //   if (type === 'duplicate') {
-  //     console.log("It's duplicating CV!")
-  //     newCVarr.push(newCVarr[index])
-  //   }
-
-  //   if (type === 'modify') {
-  //     console.log("CV can be modified in editor!")
-  //     setUserData((prev) => {
-  //       return {
-  //         ...prev,
-  //         stagingCV: newCVarr[index].data
-  //       }
-  //     })
-  //   }
-
-
-  //   setUserData((prev) => {
-  //     const newUserData = {
-  //       ...prev,
-  //       userCVs: newCVarr
-  //     }
-
-  //     if (newUserData) {
-  //       // Update Local Storage
-  //       updateCVMDatabase(newUserData);
-
-  //       return newUserData
-  //     } else {
-  //       return prev;
-  //     }
-  //   })
-
-  // }
-
-
+  // ==================== //
 
 
 
@@ -350,15 +267,7 @@ export const GlobalContextProvider = ({ children }) => {
     <GlobalContext.Provider value={{
       userData,
       setUserData,
-      // getLocalStorage,
-      // updateLocalStorage,
       setText,
-      // getCVMCurrentUser,
-      // getCVMDatabase,
-      // updateCVMDatabase,
-      // updateCVMCurrentUser,
-      // authenticated,
-      // setAuthenticated,
       capitalize,
       logout,
       saveCV,
@@ -366,7 +275,7 @@ export const GlobalContextProvider = ({ children }) => {
       setHideEditorOptions,
       saveStagingCV,
       initializeStagingCV,
-      // handleCV,
+      handleCV,
     }}>
       {children}
     </GlobalContext.Provider>

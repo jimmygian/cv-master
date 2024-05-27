@@ -177,3 +177,29 @@
     margin-top: 3rem;
     background-color: var(--editor-sidebar-bg-dark);
 }
+
+.editor-sideBar .ul-btn {
+    background-color:var(--editor-link-bg-hover);
+    color: white;
+    margin: 1rem;
+    width: 80%;
+}
+
+.save-pr-btn {
+    color: rgb(164, 156, 179) !important; 
+    margin-top: 2.5rem !important;
+    margin-bottom: 0 !important;
+}
+
+.init-tmp-btn {
+    color: rgb(164, 156, 179) !important; 
+    margin-bottom: 0 !important;   
+}
+
+.editor-secondary-btn-div {
+    display: flex;
+    justify-content: center;
+    /* border: solid 2px #bebebe; */
+    border-radius: 10px;
+    background-color: #bebebe7a;
+}

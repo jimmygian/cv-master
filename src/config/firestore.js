@@ -77,6 +77,7 @@ const getUserCVs = async (userId) => {
   querySnapshot.forEach((doc) => {
     userCVs.push({
       id: doc.id,
+      ref: doc.ref, // Adds the document reference
       ...doc.data()
     }); 
   });
@@ -84,13 +85,13 @@ const getUserCVs = async (userId) => {
   return userCVs; 
 };
 
-const storeNewCV = async (data) => {
+const storeNewCV = async (data, userId) => {
   try {
-    let refDoc;
+    let CVcollection;
     let ref;
 
-    refDoc = collection(db, 'CVs');
-    ref = await addDoc(refDoc, data);
+    CVcollection = collection(db, 'CVs');
+    ref = await addDoc(CVcollection, data);
     return ref;
   } catch (err) {
     console.error(err)
@@ -126,6 +127,51 @@ const storeStagingCV = async (data, userId) => {
   }
 }
 
+const modifyCV = async (type="delete", ref, userId) => {
+
+  // Store CV Data in "data" var.
+  const data = await getCVData(ref);
+
+
+  if (type === "delete") {
+    await deleteDoc(ref);
+    console.log("DELETED")
+  } else if (type === "modify") {
+    try {
+      await storeStagingCV(data, userId);
+    } catch (error) {
+      console.error(error);
+    }
+    
+    
+  } else if (type === "duplicate") {
+    if (data) {
+      const collectionRef = collection(db, 'CVs');
+
+      await addDoc(collectionRef, {
+        ...data,
+        CVTitle: `${data.CVTitle}_dup`
+      })
+    }
+    console.log("DUPLICATED")
+  }
+
+  async function getCVData(docRef) {
+    try {
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists) {
+        const data = docSnap.data(); // This holds the data to be duplicated
+        return data;
+      } else {
+        console.log("Document not found");
+        return null; // Handle case where document doesn't exist
+      }
+    } catch (err) {
+      console.error("Error getting document:", err);
+      return null; // Handle errors
+    }
+  }
+};
 
 export {
   createUserDocument,
@@ -133,4 +179,5 @@ export {
   getUserStagingCV, 
   storeNewCV, 
   storeStagingCV,
+  modifyCV,
 };

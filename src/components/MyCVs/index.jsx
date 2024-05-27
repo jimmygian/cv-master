@@ -14,6 +14,7 @@ export default function MyCVs() {
   const [currentSelection, setCurrentSelection] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [CVs, setCVs] = useState([]);
+  const [pressed, setPressed] = useState(false);
 
   // FETCH COMPONENT DATA
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function MyCVs() {
         const CVs = await getUserCVs(currentUser.uid);
         // console.log(CVs);
         setCVs(CVs);
+        // console.log(CVs);
       } catch (err) {
         console.log(err);
       } finally {
@@ -31,10 +33,21 @@ export default function MyCVs() {
       }
     };
     fetchCVs();
-  }, [currentUser]);
+  }, [currentUser, pressed]);
 
   function goToEditor() {
     navigate("/editor");
+  }
+
+  async function handleCVChange(type, ref) {
+    if (type === "modify") {
+      await handleCV(currentSelection, type, ref);
+      navigate("/editor/basic-info");
+      return;
+    }
+
+    await handleCV(currentSelection, type, ref);
+    setPressed((prev) => !prev);
   }
 
   const userCVEls = CVs.map((CV, index) => {
@@ -128,19 +141,19 @@ ${other}
             <div>
               <div className="CVTools container-fluid">
                 <button
-                  onClick={() => handleCV(currentSelection, "modify")}
+                  onClick={() => handleCVChange("modify", CVs[currentSelection].ref)}
                   className="btn col tool modifyBtn"
                 >
                   Modify
                 </button>
                 <button
-                  onClick={() => handleCV(currentSelection, "duplicate")}
+                  onClick={() => handleCVChange("duplicate", CVs[currentSelection].ref)}
                   className="btn col tool duplicateBtn"
                 >
                   Duplicate
                 </button>
                 <button
-                  onClick={() => handleCV(currentSelection, "remove")}
+                  onClick={() => handleCVChange("remove", CVs[currentSelection].ref)}
                   className="btn col tool removeBtn"
                 >
                   Remove
@@ -154,7 +167,7 @@ ${other}
             </div>
           ) : (
             <div className="noCVs container-fluid d-flex flex-column justify-content-center align-items-center">
-              <h3 className="CVcound">Let's create your first CV!</h3>
+              <h3 className="CVcound">Lets create your first CV!</h3>
               <button onClick={goToEditor} className=" btn welcomeBtn">
                 Create CV
               </button>
