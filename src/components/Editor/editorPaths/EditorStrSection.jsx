@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId } from 'react';
+import { useEffect, useId } from 'react';
 import '../editor.css';
 import CustomTextarea from './CustomTextarea';
 import { useGlobalContext } from '../../../utils/GlobalContext'
@@ -6,14 +6,14 @@ import { useGlobalContext } from '../../../utils/GlobalContext'
 
 export default function EditorStrSection(props) {
     const id = useId();
-    const { setText, userData, setUserData, capitalize, hideEditorOptions, setHideEditorOptions } = useGlobalContext()
-    const { section, elements } = props
+    const { setText, userData, setUserData, capitalize, setHideEditorOptions } = useGlobalContext();
+    const { section, elements, setIndex } = props;
     
    // Hide editor Selections
    useEffect(()=> {
-    props.setIndex();
+    setIndex();
     setHideEditorOptions(false)
-  }, [])
+  }, [setHideEditorOptions, setIndex])
 
     // Create elements from prop's arr
     const render = elements.map((el, index) => {

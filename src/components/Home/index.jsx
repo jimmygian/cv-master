@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGlobalContext } from "../../utils/GlobalContext";
-import { Navigate, useNavigate } from "react-router-dom";
+import { 
+  // Navigate, 
+  useNavigate } from "react-router-dom";
 import "./logingood.css";
 import { useAuth } from "../../utils/contexts/authContext";
 import { getUserCVs } from "../../config/firestore";
-import { setDoc } from "firebase/firestore";
+// import { setDoc } from "firebase/firestore";
 
 export default function Home(props) {
   const { userLoggedIn, currentUser } = useAuth();
@@ -12,14 +14,17 @@ export default function Home(props) {
   const { logout, capitalize } = useGlobalContext();
   const navigate = useNavigate();
 
-  const [inputValue, setInputValue] = useState(null);
+  // const [inputValue, setInputValue] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [userCVsLength, setUserCVsLength] = useState(0);
 
+
+  console.log("Home PROPS:", props)
   // FETCH COMPONENT DATA
   useEffect(() => {
     const fetchCVs = async () => {
       if (!currentUser) return; // Stop fetch if not logged in
+      
       setIsLoading(true);
       try {
         const CVs = await getUserCVs(currentUser.uid);
@@ -63,7 +68,7 @@ export default function Home(props) {
               >{`${userCVsLength} CVs`}</a>
             </h3>
           ) : (
-            <h3 className="CVcound">Let's create your first CV!</h3>
+            <h3 className="CVcound">Lets create your first CV!</h3>
           )}
           <div className="container-fluid actionContainer">
             <button onClick={goToEditor} className=" btn welcomeBtn">

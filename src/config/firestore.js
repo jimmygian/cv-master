@@ -7,14 +7,15 @@ import {
   doc,
   query,
   where,
-  updateDoc,
-  deleteDoc,
+  // updateDoc,
+  // deleteDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { initialStaging } from "../utils/defaultValues";
 
-export const createUserDocument = async (user) => {
+const createUserDocument = async (user) => {
   if (!user) return;
+  console.log("User Exists!");
 
   try {
     const userDocRef = doc(db, "users", `${user.uid}`);
@@ -44,14 +45,15 @@ export const createUserDocument = async (user) => {
 
     }
   } catch (err) {
+    console.log(err.code)
     console.error("Error writing document: ", err);
   }
 };
 
 
-export const getUserStagingCV = async (userId) => {
-  const projectDocRef = doc(db, 'users', userId);
-  const stagingCVCollectionRef = collection(projectDocRef, 'stagingCV'); 
+const getUserStagingCV = async (userId) => {
+  const userDocRef = doc(db, 'users', userId);
+  const stagingCVCollectionRef = collection(userDocRef, 'stagingCV'); 
 
   const tasksQuerySnapshot = await getDocs(stagingCVCollectionRef);
 
@@ -65,7 +67,7 @@ export const getUserStagingCV = async (userId) => {
 return stagingCV;
 }
 
-export const getUserCVs = async (userId) => {
+const getUserCVs = async (userId) => {
   const cvsCollectionRef = collection(db, 'CVs');
   const q = query(cvsCollectionRef, where('userId', '==', userId));
 
@@ -82,7 +84,7 @@ export const getUserCVs = async (userId) => {
   return userCVs; 
 };
 
-export const addToDB = async (path, data, type="add") => {
+const addToDB = async (path, data, type="add") => {
   try {
     let refDoc;
     let ref;
@@ -98,3 +100,11 @@ export const addToDB = async (path, data, type="add") => {
     console.error(err)
   }
 }
+
+
+export {
+  createUserDocument,
+  getUserCVs, 
+  getUserStagingCV, 
+  addToDB, 
+};

@@ -5,6 +5,8 @@ import TextareaAutosize from 'react-textarea-autosize';
 import ReactMarkdown from 'react-markdown';
 import './PreviewModal.css'
 
+import { getUserStagingCV } from "../../../config/firestore";
+
 const PreviewModal = ({ showModal, handleClose }) => {
   const { userData } = useGlobalContext()
   const data = userData.stagingCV;
@@ -74,6 +76,7 @@ const PreviewModal = ({ showModal, handleClose }) => {
         </Button>
       </Modal.Footer>
     </Modal>
+    // <h1>STAGING CVS</h1>
   );
 };
 

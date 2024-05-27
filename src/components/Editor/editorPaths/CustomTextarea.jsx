@@ -1,4 +1,4 @@
-import React, { useId, useRef, useEffect, useState } from 'react';
+import React, { useId, useRef } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 
@@ -9,7 +9,7 @@ function CustomTextarea(props) {
   function handleChange(event) {
     const text = textAreaRef.current.value;
     props.updateValue(event)
-  };
+  }
 
 
   return (
@@ -28,6 +28,6 @@ function CustomTextarea(props) {
       </div>
 
   );
-};
+}
 
 export default CustomTextarea;

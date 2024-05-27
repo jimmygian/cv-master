@@ -19,10 +19,24 @@ const Register = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!isRegistering) {
-      setIsRegistering(true);
-      const { user } = await doCreateUserWithEmailAndPassword(email, password);
-      await createUserDocument(user);
+    try {
+      if (!isRegistering) {
+        setIsRegistering(true);
+        const { user } = await doCreateUserWithEmailAndPassword(email, password);
+        await createUserDocument(user);
+      }
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode)
+      console.log(errorMessage)
+      
+      if (errorCode === "auth/email-already-in-use") {
+        console.error("Email already in use. Please try to sign-in.")
+      } else if (errorCode === "auth/weak-password") {
+        console.error("Weak Password. Please use a password that's more than 6 characters.")
+      }
+      setIsRegistering(false);
     }
   };
 
@@ -103,7 +117,7 @@ const Register = () => {
                 to={"/login"}
                 className="text-center text-sm hover:underline font-bold"
               >
-                Continue
+                Log In
               </Link>
             </div>
           </form>

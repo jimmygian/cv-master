@@ -6,9 +6,9 @@ import { useGlobalContext } from '../../../utils/GlobalContext';
 export default function EditorArrSection(props) {
 
   // Importing hooks and props
-  const { section } = props
-  const { setText, userData, setUserData, capitalize, setHideEditorOptions, hideEditorOptions } = useGlobalContext();
-  // const [sectionArr, setSectionArr] = useState(userData.stagingCV[section][section] || []);
+  const { setIndex, section } = props
+  const { setText, userData, setUserData, capitalize, setHideEditorOptions } = useGlobalContext();
+
   const [focusedTextarea, setFocusedTextarea] = useState(null); // State for tracking focused textarea
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
@@ -16,9 +16,9 @@ export default function EditorArrSection(props) {
   
    // Hide editor Selections
    useEffect(()=> {
-    props.setIndex();
+    setIndex();
     setHideEditorOptions(false)
-  }, [])
+  }, [setIndex, setHideEditorOptions])
 
   // Create section Elements
   const sectionArr = userData.stagingCV[section] ? userData.stagingCV[section][section] : [];

@@ -22,11 +22,20 @@ const Login = () => {
     if (!isSigningIn) {
       try {
         setIsSigningIn(true);
-        doSignInWithEmailAndPassword(email, password);
+        const { user } = await doSignInWithEmailAndPassword(email, password);
+        console.log("User Credential:", user);
         // await doSendEmailVerification();
+        await createUserDocument(user);
       } catch (error) {
-        console.error(error);
-        setIsSigningIn(false);
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        console.log(errorCode)
+        console.log(errorMessage)
+        if (errorCode === 'auth/invalid-credential') {
+          console.error("Incorrect email and/or password. Please try again")
+          setIsSigningIn(false);
+        }
       }
       // Inside your submitUser function's catch block:
     }
@@ -41,8 +50,19 @@ const Login = () => {
         const { user } = await doSignInWithGoogle();
         await createUserDocument(user);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+
+      console.log(errorCode)
+      console.log(errorMessage)
+      if (errorCode === 'auth/popup-closed-by-user') {
+        console.error("Did not get user's email (popup closed by user). Please try again")
+        setIsSigningIn(false);
+      } else {
+        console.error(errorMessage, "Please try again.")
+        setIsSigningIn(false);
+      }
     }
   };
 
